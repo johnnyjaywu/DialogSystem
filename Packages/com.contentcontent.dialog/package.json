@@ -1,0 +1,10 @@
+{
+  "name": "com.contentcontent.dialog",
+  "version": "0.1.0",
+  "displayName": "ContentContent Dialog System",
+  "description": "Minimal, decoupled dialog system using UI Toolkit and the New Input System.",
+  "unity": "6000.5",
+  "dependencies": {
+    "com.unity.inputsystem": "1.20.1"
+  }
+}

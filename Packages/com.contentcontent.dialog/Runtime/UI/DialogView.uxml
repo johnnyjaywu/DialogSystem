@@ -1,0 +1,11 @@
+<!-- File: DialogView.uxml -->
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="DialogView.uss" />
+    <ui:VisualElement name="dialog-container" class="dialog-container">
+        <ui:VisualElement name="dialog-panel" class="dialog-panel">
+            <ui:Label name="speaker-label" text="Speaker" class="dialog-speaker-label" />
+            <ui:Label name="body-label" text="Dialog body text..." class="dialog-body-label" />
+            <ui:VisualElement name="choices-container" class="dialog-choices-container" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

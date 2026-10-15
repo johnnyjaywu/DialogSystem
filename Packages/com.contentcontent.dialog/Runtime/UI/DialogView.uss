@@ -1,0 +1,59 @@
+/* File: DialogView.uss */
+.dialog-container {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 32px;
+}
+
+.dialog-panel {
+    width: 80%;
+    max-width: 1000px;
+    min-height: 180px;
+    background-color: rgba(20, 22, 28, 0.94);
+    border-color: rgb(85, 92, 110);
+    border-width: 2px;
+    border-radius: 8px;
+    padding: 24px;
+}
+
+.dialog-speaker-label {
+    font-size: 22px;
+    -unity-font-style: bold;
+    color: rgb(235, 195, 95);
+    margin-bottom: 10px;
+}
+
+.dialog-body-label {
+    font-size: 18px;
+    color: rgb(240, 240, 245);
+    white-space: normal;
+    margin-bottom: 16px;
+}
+
+.dialog-choices-container {
+    flex-direction: column;
+    margin-top: 8px;
+}
+
+.dialog-choice-button {
+    font-size: 16px;
+    background-color: rgb(42, 46, 58);
+    color: rgb(240, 240, 245);
+    border-color: rgb(95, 105, 125);
+    border-width: 1px;
+    border-radius: 4px;
+    padding: 10px 16px;
+    margin-top: 6px;
+    -unity-text-align: middle-left;
+}
+
+.dialog-choice-button:hover,
+.dialog-choice-button:focus {
+    background-color: rgb(68, 76, 96);
+    border-color: rgb(235, 195, 95);
+}

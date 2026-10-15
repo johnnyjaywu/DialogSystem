@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3ec267e90e5ee04fa42ea84e2b90683, type: 3}
+  m_Name: SampleConversation
+  m_EditorClassIdentifier: ContentContent.Dialog::ContentContent.Dialog.DialogAsset
+  _nodes:
+  - _speaker: Operator
+    _text: Link established. Press your Advance input while this text is typing to
+      test immediate typewriter skip.
+    _nextNodeIndex: 1
+    _choices: []
+  - _speaker: 
+    _text: '[The terminal hums quietly as telemetry packets synchronize across the
+      local bus.]'
+    _nextNodeIndex: 2
+    _choices: []
+  - _speaker: Operator
+    _text: 'Select a transmission protocol to test internal graph branching or immediate
+      termination:'
+    _nextNodeIndex: -1
+    _choices:
+    - _text: Route via Encrypted Tunnel
+      _targetNodeIndex: 3
+    - _text: Broadcast on Open Frequency
+      _targetNodeIndex: 4
+    - _text: Terminate Connection Immediately (StopDialog)
+      _targetNodeIndex: -1
+  - _speaker: Operator
+    _text: Encrypted tunnel engaged. Zero packet leakage detected.
+    _nextNodeIndex: 5
+    _choices: []
+  - _speaker: Operator
+    _text: Broadcasting on open frequency. All nearby nodes have been alerted.
+    _nextNodeIndex: 5
+    _choices: []
+  - _speaker: Operator
+    _text: Demonstration complete. Closing transmission channel.
+    _nextNodeIndex: -1
+    _choices: []
