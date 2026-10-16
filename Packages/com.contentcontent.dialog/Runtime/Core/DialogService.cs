@@ -22,11 +22,39 @@ namespace ContentContent.Dialog
         private bool _isTyping;
         private bool _isDisposed;
 
+        /// <summary>
+        /// Event triggered when a dialog session starts. Subscribers can use this to perform any necessary setup or state changes when dialog begins.
+        /// </summary>
         public event Action DialogStarted;
+
+        /// <summary>
+        /// Event triggered when a dialog session ends. Subscribers can use this to perform any necessary cleanup or state changes when dialog concludes.
+        /// </summary>
         public event Action DialogEnded;
 
+        /// <summary>
+        /// Indicates whether a dialog session is currently active. Returns true if a dialog session is in progress; otherwise, returns false.  
+        /// </summary>
         public bool IsActive { get; private set; }
 
+        /// <summary>
+        /// Initializes a new instance of the DialogService class with the specified view, input provider, settings, and optional delay function for typewriter effect.
+        /// </summary>
+        /// <param name="view">
+        /// The IDialogView implementation responsible for rendering dialog lines and choices to the user interface. Cannot be null.
+        /// </param>
+        /// <param name="inputProvider">
+        /// The IDialogInputProvider implementation responsible for capturing user input to advance dialog or select choices. Cannot be null.
+        /// </param>
+        /// <param name="settings">
+        /// The DialogSettings instance containing configuration options for dialog behavior, such as typewriter speed and skipping behavior. Cannot be null.
+        /// </param>
+        /// <param name="delayAsync">
+        /// Optional asynchronous delay function used for the typewriter effect. If not provided, defaults to Unity's WaitForSecondsAsync. This allows for custom delay implementations, such as editor-compatible delays during testing.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when any of the required parameters (view, inputProvider, or settings) are null.
+        /// </exception>
         public DialogService(
             IDialogView view,
             IDialogInputProvider inputProvider,
@@ -45,6 +73,15 @@ namespace ContentContent.Dialog
             _inputProvider.AdvanceRequested += HandleAdvanceRequested;
         }
 
+        /// <summary>
+        /// Begins a dialog session using the provided IDialogSource. If a dialog session is already active, it will be stopped before starting the new one.
+        /// </summary>
+        /// <param name="source">
+        /// The IDialogSource implementation that provides the dialog lines and choices for the session. Cannot be null.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when the source parameter is null.
+        /// </exception>
         public void StartDialog(IDialogSource source)
         {
             ThrowIfDisposed();
@@ -73,6 +110,9 @@ namespace ContentContent.Dialog
             AdvanceToNextLine();
         }
 
+        /// <summary>
+        /// Stops the current dialog session, if one is active. This method cancels any ongoing typewriter effect, clears the dialog view, disables input, and triggers the DialogEnded event. If no dialog session is active, this method has no effect.
+        /// </summary>
         public void StopDialog()
         {
             if (!IsActive)
@@ -95,6 +135,9 @@ namespace ContentContent.Dialog
             DialogEnded?.Invoke();
         }
 
+        /// <summary>
+        /// Disposes of the DialogService instance, stopping any active dialog session and releasing resources. After calling Dispose, the instance should not be used again. This method is idempotent; calling it multiple times has no additional effect.
+        /// </summary>
         public void Dispose()
         {
             if (_isDisposed)

@@ -14,6 +14,9 @@ namespace ContentContent.Dialog
         [SerializeField]
         private DialogNode[] _nodes = System.Array.Empty<DialogNode>();
 
+        /// <summary>
+        /// Gets the array of dialog nodes that define the branching conversation structure for this dialog asset. Each DialogNode represents a single turn in the conversation, including speaker, text, choices, and routing information. The nodes are serialized in the ScriptableObject and can be edited in the Unity Inspector.
+        /// </summary>
         public IReadOnlyList<DialogNode> Nodes => _nodes;
 
         /// <summary>

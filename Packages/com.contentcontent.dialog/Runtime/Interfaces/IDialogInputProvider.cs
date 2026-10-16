@@ -10,9 +10,19 @@ namespace ContentContent.Dialog
     /// </summary>
     public interface IDialogInputProvider : IDisposable
     {
+        /// <summary>
+        /// Raised when the player requests to advance the dialog.
+        /// </summary>
         event Action AdvanceRequested;
 
+        /// <summary>
+        /// Enables the input provider to start listening for player input.
+        /// </summary>
         void Enable();
+
+        /// <summary>
+        /// Disables the input provider from listening for player input.
+        /// </summary>
         void Disable();
     }
 }

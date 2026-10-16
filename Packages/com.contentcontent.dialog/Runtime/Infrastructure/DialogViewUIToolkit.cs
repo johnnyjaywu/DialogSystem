@@ -32,8 +32,17 @@ namespace ContentContent.Dialog
         private int _visibleCharacters;
         private IReadOnlyList<string> _currentChoices;
 
+        /// <summary>
+        /// Occurs when a choice button is clicked, passing the index of the selected choice as an argument.
+        /// </summary>
         public event Action<int> ChoiceSelected;
 
+        /// <summary>
+        /// Initializes a new instance of the DialogViewUIToolkit class with the specified DialogUISettings.
+        /// </summary>
+        /// <param name="uiSettings">
+        /// The DialogUISettings object containing the names of the UI Toolkit elements to bind.
+        /// </param>
         public DialogViewUIToolkit(DialogUISettings uiSettings)
         {
             _containerElementName = string.IsNullOrWhiteSpace(uiSettings.ContainerElementName)
@@ -57,6 +66,15 @@ namespace ContentContent.Dialog
                 : uiSettings.ChoiceButtonClassName;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the DialogViewUIToolkit class with the specified root VisualElement and DialogUISettings.
+        /// </summary>
+        /// <param name="rootElement">
+        /// The root VisualElement of the UI Toolkit hierarchy to bind the dialog view elements from.
+        /// </param>
+        /// <param name="uiSettings">
+        /// The DialogUISettings object containing the names of the UI Toolkit elements to bind.
+        /// </param>
         public DialogViewUIToolkit(VisualElement rootElement, DialogUISettings uiSettings)
             : this(uiSettings)
         {
@@ -98,6 +116,9 @@ namespace ContentContent.Dialog
             RestoreStateToBoundElements();
         }
 
+        /// <summary>
+        /// Shows the dialog view by setting its visibility to true and displaying the dialog container.
+        /// </summary>
         public void Show()
         {
             _isVisible = true;
@@ -108,6 +129,9 @@ namespace ContentContent.Dialog
             }
         }
 
+        /// <summary>
+        /// Hides the dialog view by setting its visibility to false, clearing the speaker and body text, and hiding the dialog container.
+        /// </summary>
         public void Hide()
         {
             _isVisible = false;
@@ -134,6 +158,10 @@ namespace ContentContent.Dialog
             }
         }
 
+        /// <summary>
+        /// Sets the speaker name to be displayed in the dialog view. If the speaker name is null or whitespace, the speaker label will be hidden.
+        /// </summary>
+        /// <param name="speakerName"></param>
         public void SetSpeaker(string speakerName)
         {
             _currentSpeaker = speakerName ?? string.Empty;
@@ -148,6 +176,10 @@ namespace ContentContent.Dialog
             _speakerLabel.style.display = hasSpeaker ? DisplayStyle.Flex : DisplayStyle.None;
         }
 
+        /// <summary>
+        /// Sets the full text of the dialog body. If the provided text is null, it will be treated as an empty string. The visible character count will be reset to zero, and the body label will be cleared.
+        /// </summary>
+        /// <param name="text"></param>
         public void SetFullText(string text)
         {
             _fullText = text ?? string.Empty;
@@ -159,6 +191,10 @@ namespace ContentContent.Dialog
             }
         }
 
+        /// <summary>
+        /// Sets the number of visible characters in the dialog body. If the provided character count is less than or equal to zero, the body label will be cleared. If the character count exceeds the length of the full text, the entire text will be displayed. Otherwise, the body label will display the specified number of characters, with unrevealed characters rendered as fully transparent using rich-text alpha tags.
+        /// </summary>
+        /// <param name="characterCount"></param>
         public void SetVisibleCharacters(int characterCount)
         {
             _visibleCharacters = characterCount;
@@ -193,6 +229,10 @@ namespace ContentContent.Dialog
             _bodyLabel.text = _fullText.Insert(clampedCount, HiddenAlphaTag);
         }
 
+        /// <summary>
+        /// Displays a list of choices in the dialog view. Each choice is represented as a button. If the provided list of choices is null or empty, the choices container will be hidden. Otherwise, the choices container will be displayed, and buttons for each choice will be created and added to the container. Clicking a choice button will invoke the ChoiceSelected event with the index of the selected choice.
+        /// </summary>
+        /// <param name="choices"></param>
         public void DisplayChoices(IReadOnlyList<string> choices)
         {
             ClearChoices();
@@ -225,6 +265,10 @@ namespace ContentContent.Dialog
             }
         }
 
+
+        /// <summary>
+        /// Clears all currently displayed choices from the dialog view. This method removes all choice buttons from the choices container, clears the list of active choice buttons, and hides the choices container. It also sets the current choices to null.
+        /// </summary>
         public void ClearChoices()
         {
             _currentChoices = null;

@@ -12,6 +12,9 @@ namespace ContentContent.Dialog
     [Serializable]
     public struct DialogNode
     {
+        /// <summary>
+        /// Special index value indicating that the conversation should terminate when this node is reached. Use this value for the NextNodeIndex of a node to end the conversation, or for the TargetNodeIndex of a DialogChoice to end the conversation when that choice is selected.
+        /// </summary>
         public const int EndConversationIndex = -1;
 
         [SerializeField]
@@ -27,11 +30,44 @@ namespace ContentContent.Dialog
         [SerializeField]
         private DialogChoice[] _choices;
 
+        /// <summary>
+        /// Name of the speaker for this dialog node. Can be null or empty if the speaker is unknown or not relevant.
+        /// </summary>
         public string Speaker => _speaker ?? string.Empty;
+
+        /// <summary>
+        /// Text of the dialog node. Cannot be null.
+        /// </summary>
         public string Text => _text ?? string.Empty;
+
+        /// <summary>
+        /// Index of the next dialog node to transition to after this node. Use DialogNode.EndConversationIndex (-1) to terminate the conversation after this node.
+        /// </summary>
         public int NextNodeIndex => _nextNodeIndex;
+
+        /// <summary>
+        /// List of dialog choices that the player can select in response to this dialog node. Can be null or empty if there are no choices available.
+        /// </summary>
         public IReadOnlyList<DialogChoice> Choices => _choices ?? Array.Empty<DialogChoice>();
 
+        /// <summary>
+        /// Initializes a new instance of the DialogNode struct with the specified speaker, text, next node index, and optional choices.
+        /// </summary>
+        /// <param name="speaker">
+        /// Name of the speaker for this dialog node. Can be null or empty if the speaker is unknown or not relevant.
+        /// </param>
+        /// <param name="text">
+        /// Text of the dialog node. Cannot be null.
+        /// </param>
+        /// <param name="nextNodeIndex">
+        /// Index of the next dialog node to transition to after this node. Use DialogNode.EndConversationIndex (-1) to terminate the conversation after this node.
+        /// </param>
+        /// <param name="choices">
+        /// List of dialog choices that the player can select in response to this dialog node. Can be null or empty if there are no choices available.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when the text parameter is null.
+        /// </exception>
         public DialogNode(
             string speaker,
             string text,
