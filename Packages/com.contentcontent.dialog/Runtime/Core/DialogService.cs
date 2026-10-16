@@ -14,6 +14,7 @@ namespace ContentContent.Dialog
         private readonly IDialogView _view;
         private readonly IDialogInputProvider _inputProvider;
         private readonly DialogSettings _settings;
+        private readonly Func<float, CancellationToken, Awaitable> _delayAsync;
 
         private IDialogSource _currentSource;
         private DialogLine _currentLine;
@@ -29,11 +30,16 @@ namespace ContentContent.Dialog
         public DialogService(
             IDialogView view,
             IDialogInputProvider inputProvider,
-            DialogSettings settings)
+            DialogSettings settings,
+            Func<float, CancellationToken, Awaitable> delayAsync = null)
         {
             _view = view ?? throw new ArgumentNullException(nameof(view));
             _inputProvider = inputProvider ?? throw new ArgumentNullException(nameof(inputProvider));
             _settings = settings;
+
+            // Default to Unity's player-loop WaitForSecondsAsync at runtime while allowing EditMode tests
+            // to inject an editor-compatible async delay strategy.
+            _delayAsync = delayAsync ?? Awaitable.WaitForSecondsAsync;
 
             _view.ChoiceSelected += HandleChoiceSelected;
             _inputProvider.AdvanceRequested += HandleAdvanceRequested;
@@ -176,7 +182,7 @@ namespace ContentContent.Dialog
             {
                 for (int i = 1; i <= totalCharacters; i++)
                 {
-                    await Awaitable.WaitForSecondsAsync(_settings.SecondsPerCharacter, cancellationToken);
+                    await _delayAsync(_settings.SecondsPerCharacter, cancellationToken);
                     _view.SetVisibleCharacters(i);
                 }
             }

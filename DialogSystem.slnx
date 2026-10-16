@@ -1,4 +1,5 @@
 ﻿<Solution>
   <Project Path="ContentContent.Dialog.csproj" />
   <Project Path="ContentContent.Dialog.Tests.csproj" />
+  <Project Path="Assembly-CSharp-Editor.csproj" />
 </Solution>

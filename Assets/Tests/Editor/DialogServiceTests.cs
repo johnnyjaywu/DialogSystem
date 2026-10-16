@@ -1,5 +1,6 @@
 // File: DialogServiceTests.cs
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
@@ -38,6 +39,16 @@ namespace ContentContent.Dialog.Tests
             _sut?.Dispose();
         }
 
+        /// <summary>
+        /// EditMode-compatible delay strategy using standard .NET system clock (Task.Delay) 
+        /// because Awaitable.WaitForSecondsAsync requires an active Play Mode player loop to tick.
+        /// </summary>
+        private static async Awaitable EditModeDelayAsync(float seconds, CancellationToken cancellationToken)
+        {
+            int milliseconds = Mathf.Max(1, Mathf.RoundToInt(seconds * 1000f));
+            await Task.Delay(milliseconds, cancellationToken);
+        }
+
         [Test]
         public void StartDialog_WithValidSource_ShowsViewEnablesInputAndDisplaysFirstLine()
         {
@@ -47,7 +58,7 @@ namespace ContentContent.Dialog.Tests
             _source.CanContinue.Returns(true);
             _source.GetNextLine().Returns(expectedLine);
 
-            var startedEventFired = false;
+            bool startedEventFired = false;
             _sut.DialogStarted += () => startedEventFired = true;
 
             // Act
@@ -98,7 +109,7 @@ namespace ContentContent.Dialog.Tests
             _source.CanContinue.Returns(true, false);
             _source.GetNextLine().Returns(onlyLine);
 
-            var endedEventFired = false;
+            bool endedEventFired = false;
             _sut.DialogEnded += () => endedEventFired = true;
 
             _sut.StartDialog(_source);
@@ -168,8 +179,8 @@ namespace ContentContent.Dialog.Tests
         [Test]
         public async Task StartDialog_WithAsyncTypewriter_ProgressivelyUpdatesVisibleCharacters()
         {
-            // Arrange
-            _sut = new DialogService(_view, _inputProvider, _asyncSettings);
+            // Arrange: Inject EditModeDelayAsync so the timer ticks without needing Play Mode.
+            _sut = new DialogService(_view, _inputProvider, _asyncSettings, EditModeDelayAsync);
             var line = new DialogLine("Operator", "ABC");
             _source.CanContinue.Returns(true);
             _source.GetNextLine().Returns(line);
@@ -180,18 +191,21 @@ namespace ContentContent.Dialog.Tests
             // Initial frame sets visible characters to 0
             _view.Received(1).SetVisibleCharacters(0);
 
-            // Allow time for typewriter coroutine to process characters
-            await Task.Delay(50);
+            // Wait long enough for all 3 characters (3 * 10ms = 30ms) to complete typing
+            await Task.Delay(100);
 
-            // Assert: View received intermediate or full character reveal updates
-            _view.Received().SetVisibleCharacters(Arg.Is<int>(count => count > 0 && count <= 3));
+            // Assert: Every character step (1, 2, 3) was revealed sequentially
+            _view.Received().SetVisibleCharacters(1);
+            _view.Received().SetVisibleCharacters(2);
+            _view.Received().SetVisibleCharacters(3);
         }
 
         [Test]
         public async Task AdvanceRequested_WhileTyping_CompletesTypewriterImmediately()
         {
             // Arrange
-            _sut = new DialogService(_view, _inputProvider, _asyncSettings);
+            var slowSettings = new DialogSettings(secondsPerCharacter: 0.5f, allowTypewriterSkip: true);
+            _sut = new DialogService(_view, _inputProvider, slowSettings, EditModeDelayAsync);
             var line = new DialogLine("Operator", "Long typewriter string for testing skip behavior.");
             _source.CanContinue.Returns(true);
             _source.GetNextLine().Returns(line);
@@ -202,7 +216,6 @@ namespace ContentContent.Dialog.Tests
             // Act: Press advance input immediately while typing is active
             _inputProvider.AdvanceRequested += Raise.Event<Action>();
 
-            // Allow short yield for async task cancellation processing
             await Task.Yield();
 
             // Assert: Typewriter skipped straight to full text length

@@ -1,0 +1,51 @@
+name: Build and Deploy DocFX Documentation
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'Packages/com.contentcontent.dialog/README.md'
+      - 'Packages/com.contentcontent.dialog/Runtime/**/*.cs'
+      - 'Packages/com.contentcontent.dialog/Documentation~/**'
+      - '.github/workflows/deploy-docs.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: 'pages'
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Install DocFX CLI
+        run: dotnet tool update -g docfx
+
+      - name: Build Documentation Site
+        run: docfx Packages/com.contentcontent.dialog/Documentation~/docfx.json
+
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'Packages/com.contentcontent.dialog/Documentation~/_site'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
